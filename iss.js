@@ -11,37 +11,34 @@ const request = require('request');
 // let ip = '';
 // let coords = 0;
 
+
+
+
 //>>Here the func is defined and requires only a callback func. In index.js this func is called and provided with a callback func.
 const nextISSTimesForMyLocations = (callback) => {
   //check for errors first-->nope! cant check because no request has been made and nothing has happened yet
   //call first func at bottom of this func
+
   const fetchMyIp = callback => {
-    request(`https://api64.ipify.org?format=json`, (error, response, body) => {
+    request('https://api.ipify.org?format=json', (error, response, body) => {
       //first catch and deal with errors
       if (error) return callback(error, null);
       //then make sure the server responses status code is 200
       if (response.statusCode !== 200) {
-        callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
-        return;
+        return callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
       }
       //parses JSON response into js
-
-
-
-
-  >>>>    
       const ip = JSON.parse(body).ip;
       
       //call next func at bottom of this func
       //---find approximate coordinates---
       const fetchCoordsByIP = (ip, callback) => {
-        request(, (error, response, body) => {
+        request(`https://api.ipbase.com/v2/info?apikey=VMJ1aSCZxmQpe04cwFlO2De28jD7z8mYInizmGTi&ip=${ip}`, (error, response, body) => {
           //first catch and deal with errors
           if (error) return callback(error, null);
           //then make sure the server responses status code is 200
           if (response.statusCode !== 200) {
-            callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
-            return;
+            return callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
           }
           //parse returned info
           const data = JSON.parse(body).data;
@@ -57,22 +54,11 @@ const nextISSTimesForMyLocations = (callback) => {
                 if (error) return callback(error, null);
                 //then make sure the server responses status code is 200
                 if (response.statusCode !== 200) {
-                  callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
-                  return;
+                  return callback(Error(`Status Code >${response.statusCode}< when fetching IP. Response: ${body}`), null);
                 }
                 //parse returned info
                 const issPasses = JSON.parse(body).response;
-                let issPassesAsString = '';
-                
-                for (let pass in issPasses) {
-                  console.log('>>>>', new Date().getMonth(issPasses[pass]), Date().getDay(issPasses[pass]), Date().getFullYear(issPasses[pass]), '<<<<')
-                  issPassesAsString += `The ISS will be passing overhead at ${issPasses[pass].risetime / 1060} and will be potentially visible for ${pass.duration} seconds.`
-                }
-                // const issPassesAsString = '';
-                // for (let pass in issPasses) {
-                //   issPassesAsString += `The ISS will be passing overhead at ${issPasses} and will be potentially visible for ${pass.duration} seconds.`
-                // }
-                callback(error, issPassesAsString)
+                callback(null, issPasses)
               });
           };
           fetchFlyovers(coords, callback);
@@ -83,6 +69,7 @@ const nextISSTimesForMyLocations = (callback) => {
   };
   fetchMyIp(callback);
 }
+
 module.exports = { nextISSTimesForMyLocations };
 
 
