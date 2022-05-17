@@ -1,8 +1,14 @@
-const log = console.log; 
-const { fetchMyIp, fetchCoordsByIP } = require('./iss_promised');
+// const { response } = require('express');
+const log = console.log;
+const { fetchMyIp, fetchCoordsByIP, fetchFlyovers, printNextFlyovers } = require('./iss_promised');
 
 
 fetchMyIp()
-  .then(body => body[ip])
-fetchCoordsByIP(ip)
-  .then(body => body.)
+  .then(fetchCoordsByIP)
+  .then(fetchFlyovers)
+  .then(printNextFlyovers)
+  .catch(error => log('.catch caught----------------->', error));
+  
+
+
+  
